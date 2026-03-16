@@ -1,0 +1,21 @@
+{
+  "expo": {
+    "name": "tkbetter",
+    "slug": "tkbetter",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "tkbetter",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tkbetter.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.tkbetter.app"
+    }
+  }
+}
