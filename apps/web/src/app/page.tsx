@@ -1,4 +1,4 @@
-import { APP_NAME } from '@tkbetter/shared';
+import { APP_NAME } from '@tkbetter/domain';
 
 export default function Home() {
   return (

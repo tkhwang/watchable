@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { APP_NAME } from '@tkbetter/shared';
+import { APP_NAME } from '@tkbetter/domain';
 
 export default function HomeScreen() {
   return (
