@@ -5,7 +5,12 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "type-check": "tsc --noEmit",
     "lint": "eslint src/"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.0"
   }
 }
