@@ -34,10 +34,10 @@
 
 | 기능 | 설명 |
 |------|------|
-| CRUD | Task 생성, 수정, 삭제 |
+| 생성/수정 | Task 생성 및 수정 |
 | 색상/아이콘 | Task별 시각 구분을 위한 색상 및 아이콘 지정 |
 | 정렬 | 사용자 정의 순서 (drag & drop) |
-| 아카이브 | 더 이상 사용하지 않는 Task를 숨김 처리 (삭제와 분리) |
+| 아카이브 | 더 이상 사용하지 않는 Task를 숨김 처리. 아카이브 해제로 복원 가능 |
 
 ### F2: 시간 기록
 
@@ -68,6 +68,7 @@ Task에 대한 시간을 start/stop 방식으로 기록한다.
 - **break 세션**: TimeEntry를 생성하지 않음 (휴식은 시간 기록 대상이 아님).
 - **조기 종료**: 사용자가 focus 도중 정지하면 PomodoroSession.completedAt = null, actualDuration = 실제 경과 시간. 연결된 TimeEntry도 해당 시점에 stoppedAt 설정.
 - **건너뛰기**: 사용자가 break를 건너뛰면 다음 focus로 즉시 진행.
+- **break의 taskId**: break 세션은 직전 focus 세션의 taskId를 상속한다 (Pomodoro 사이클 추적용).
 
 ### F4: 통계 및 대시보드
 
@@ -202,7 +203,7 @@ interface TimeEntry {
   taskId: string;
   startedAt: Date;      // UTC
   stoppedAt: Date | null; // null = 진행 중
-  duration: number | null; // seconds, 서버에서 stoppedAt 설정 시 계산. 진행 중(null)이면 클라이언트에서 startedAt 기준 실시간 표시
+  duration: number | null; // seconds, stoppedAt 설정 시 계산. startedAt/stoppedAt 수정 시에도 재계산 필수. 진행 중(null)이면 클라이언트에서 startedAt 기준 실시간 표시
   pomodoroSessionId: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -219,10 +220,18 @@ interface PomodoroSession {
   type: 'focus' | 'short_break' | 'long_break';
   plannedDuration: number; // seconds
   actualDuration: number | null;
+  startedAt: Date;       // 세션 실제 시작 시점 (createdAt과 분리)
   completedAt: Date | null;
   createdAt: Date;
 }
 ```
+
+#### Phase 1 스키마 전략
+
+Pomodoro는 Phase 2 기능이지만, 스키마 호환성을 위해 다음과 같이 처리한다:
+
+- **Phase 1에 포함**: TimeEntry의 `pomodoroSessionId` 컬럼 (nullable), UserProfile의 Pomodoro 설정 필드 (기본값 적용)
+- **Phase 2에서 생성**: `pomodoro_sessions` 테이블. Phase 1에서는 테이블 없이 nullable FK만 유지
 
 ---
 
@@ -316,10 +325,11 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| GET | `/tasks` | 사용자의 Task 목록 조회 (아카이브 제외) |
+| GET | `/tasks` | 사용자의 Task 목록 조회. `?includeArchived=true`로 아카이브 포함 가능 |
 | POST | `/tasks` | Task 생성 |
 | PATCH | `/tasks/:id` | Task 수정 |
-| DELETE | `/tasks/:id` | Task 삭제 (soft delete → 아카이브) |
+| PATCH | `/tasks/:id/archive` | Task 아카이브 (isArchived = true). 기존 TimeEntry는 유지 |
+| PATCH | `/tasks/:id/unarchive` | Task 아카이브 해제 (isArchived = false) |
 
 ### Time Entries
 
@@ -327,17 +337,20 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 |--------|----------|------|
 | POST | `/time-entries/start` | 타이머 시작 (기존 활성 타이머 자동 종료) |
 | POST | `/time-entries/stop` | 현재 활성 타이머 종료 |
-| GET | `/time-entries?date=YYYY-MM-DD` | 특정 날짜 기록 조회 |
-| GET | `/time-entries?from=&to=` | 기간별 기록 조회 |
-| PATCH | `/time-entries/:id` | 기록 수동 편집 (startedAt, stoppedAt) |
+| GET | `/time-entries?date=YYYY-MM-DD` | 특정 날짜 기록 조회. date는 사용자 timezone 기준 |
+| GET | `/time-entries?from=&to=` | 기간별 기록 조회. ISO 8601 datetime (UTC) |
+| PATCH | `/time-entries/:id` | 기록 수동 편집 (startedAt, stoppedAt). duration 자동 재계산 |
+| DELETE | `/time-entries/:id` | 기록 삭제 (hard delete. 잘못된 기록 제거용) |
 | GET | `/time-entries/active` | 현재 활성 타이머 조회 |
 
 ### Statistics
 
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| GET | `/stats/daily?date=YYYY-MM-DD` | 일별 Task별 시간 요약 |
-| GET | `/stats/weekly?date=YYYY-MM-DD` | 주별 통계 (해당 주) |
+| GET | `/stats/daily?date=YYYY-MM-DD` | 일별 Task별 시간 요약. date는 사용자 timezone 기준 |
+| GET | `/stats/weekly?date=YYYY-MM-DD` | 주별 통계 (해당 주, ISO week 월요일 시작). date는 사용자 timezone 기준 |
+
+> **날짜 경계 처리**: `date` 파라미터는 사용자의 `UserProfile.timezone` 기준으로 해석한다. 서버는 해당 timezone의 자정~자정을 UTC 범위로 변환하여 쿼리한다. 주간 통계는 ISO week 기준 (월요일 시작).
 
 ---
 
@@ -345,7 +358,7 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 
 | 시나리오 | 처리 방식 |
 |---------|----------|
-| Task 삭제 시 기존 TimeEntry | Soft delete (아카이브). 기존 TimeEntry는 유지되며 통계에 포함 |
+| Task 아카이브 시 기존 TimeEntry | 아카이브된 Task의 기존 TimeEntry는 유지되며 통계에 포함. 아카이브된 Task로는 새 기록 불가 |
 | 장시간 방치 타이머 (24h+) | 클라이언트에서 경고 표시. 사용자가 수동으로 종료 시간 편집 가능 |
 | 동시 디바이스 타이머 충돌 | 서버의 partial unique index가 방지. 두 번째 요청은 409 Conflict 반환 |
 | Task 없는 상태 (empty state) | 온보딩 가이드 표시: "첫 번째 Task를 만들어보세요" |
