@@ -62,6 +62,13 @@ Task에 대한 시간을 start/stop 방식으로 기록한다.
 | 알림 | 각 단계 전환 시 알림 |
 | 기록 연동 | Pomodoro 세션도 시간 기록에 자동 반영 |
 
+**Pomodoro-TimeEntry 매핑 규칙:**
+
+- **focus 세션**: 1개의 PomodoroSession = 1개의 TimeEntry. TimeEntry.pomodoroSessionId로 연결.
+- **break 세션**: TimeEntry를 생성하지 않음 (휴식은 시간 기록 대상이 아님).
+- **조기 종료**: 사용자가 focus 도중 정지하면 PomodoroSession.completedAt = null, actualDuration = 실제 경과 시간. 연결된 TimeEntry도 해당 시점에 stoppedAt 설정.
+- **건너뛰기**: 사용자가 break를 건너뛰면 다음 focus로 즉시 진행.
+
 ### F4: 통계 및 대시보드
 
 기록된 데이터를 시각화하여 패턴을 파악한다.
@@ -123,9 +130,9 @@ Supabase Auth 기반 인증.
 |------|------|------|
 | **Entity** | 고유 ID를 가진 도메인 객체 | Task, TimeEntry, User |
 | **Value Object** | 불변 값 타입 | Color, Duration, TimeRange |
-| **Aggregate** | 일관성 경계 단위 | Task (root) + TimeEntry |
-| **Repository** | 영속화 인터페이스 | TaskRepository, TimeEntryRepository |
-| **Domain Service** | Entity에 속하지 않는 도메인 로직 | TimerService (자동 전환 로직) |
+| **Aggregate** | 일관성 경계 단위 | Task (독립), TimeEntry (독립), PomodoroSession (독립) |
+| **Repository** | 영속화 인터페이스 | TaskRepository, TimeEntryRepository, PomodoroSessionRepository |
+| **Domain Service** | Entity에 속하지 않는 도메인 로직 | TimerService (자동 전환, 단일 활성 제약 로직) |
 
 #### Layered Architecture
 
@@ -142,8 +149,33 @@ Infrastructure (Repository 구현, Supabase Client)
 - **Domain 계층**은 외부 의존성이 없다 (순수 TypeScript).
 - **Infrastructure**가 Domain의 Repository 인터페이스를 구현한다.
 - `@tkbetter/shared`에 Domain 계층을 위치시켜 모든 앱에서 공유한다.
+- **Value Object**는 도메인 계층에서 타입으로 강제하고, DB에는 primitive로 저장한다.
+
+#### Aggregate 설계 원칙
+
+Task, TimeEntry, PomodoroSession은 각각 **독립된 Aggregate**로 설계한다.
+
+- **Task Aggregate**: Task 자체의 CRUD와 속성 관리만 담당.
+- **TimeEntry Aggregate**: 개별 시간 기록의 생명주기 관리. taskId로 Task를 참조하되 Task aggregate에 포함되지 않음.
+- **PomodoroSession Aggregate**: Pomodoro 세션의 생명주기 관리.
+- **단일 활성 타이머 제약**은 `TimerService` (Domain Service)에서 enforce. DB 레벨에서는 partial unique index (`CREATE UNIQUE INDEX ON time_entries(user_id) WHERE stopped_at IS NULL`)로 보장.
 
 ### 도메인 모델 (Data Model 초안)
+
+#### UserProfile
+
+```typescript
+interface UserProfile {
+  id: string;           // UUID (= Supabase Auth uid)
+  displayName: string;
+  timezone: string;     // IANA timezone (e.g. "Asia/Seoul")
+  pomodoroFocusMin: number;   // default: 25
+  pomodoroShortBreakMin: number; // default: 5
+  pomodoroLongBreakMin: number;  // default: 15
+  createdAt: Date;
+  updatedAt: Date;
+}
+```
 
 #### Task
 
@@ -170,7 +202,7 @@ interface TimeEntry {
   taskId: string;
   startedAt: Date;      // UTC
   stoppedAt: Date | null; // null = 진행 중
-  duration: number | null; // seconds, 계산 필드
+  duration: number | null; // seconds, 서버에서 stoppedAt 설정 시 계산. 진행 중(null)이면 클라이언트에서 startedAt 기준 실시간 표시
   pomodoroSessionId: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -234,7 +266,7 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 | 항목 | 요구사항 |
 |------|---------|
 | **반응 속도** | 타이머 시작/정지 200ms 이내 응답 |
-| **오프라인** | 인터넷 없이도 기록 가능, 연결 시 자동 동기화 |
+| **오프라인** | Phase 2에서 구현. Phase 1은 온라인 필수. Phase 2에서 로컬 캐시 + last-write-wins 동기화 도입 예정 |
 | **보안** | Supabase RLS로 사용자별 데이터 격리 |
 | **시간대** | 모든 시간 UTC 저장, 클라이언트에서 로컬 변환 |
 | **데이터 정합성** | 동시에 하나의 활성 타이머만 허용 |
@@ -245,16 +277,79 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 | Phase | 범위 | 목표 |
 |-------|------|------|
 | **Phase 1 (MVP)** | 인증 + Task 관리 + 시간 기록 + 기본 통계 | 핵심 가치 검증 |
-| **Phase 2** | Pomodoro 타이머 + 웹 대시보드 | 사용성 확장 |
+| **Phase 2** | Pomodoro 타이머 + 웹 대시보드 + 오프라인 지원 | 사용성 확장 |
 | **Phase 3** | 모바일 위젯 + Apple Watch | 접근성 강화 |
 | **Phase 4** | 고급 분석, 데이터 내보내기, 과금 | 수익화 및 고도화 |
 
+#### Phase별 앱 범위
+
+| Phase | Mobile | Web | API |
+|-------|--------|-----|-----|
+| **Phase 1** | O (주력) | X (미구현) | O |
+| **Phase 2** | O | O (대시보드) | O |
+| **Phase 3** | O (위젯) | O | O |
+| **Phase 4** | O | O | O |
+
 ### Phase 1 MVP 상세 범위
 
-- **인증**: Email/Password 가입 및 로그인 (Google/Apple은 Phase 1 후반 또는 Phase 2)
+- **인증**: Email/Password 가입 및 로그인만. Google/Apple OAuth는 Phase 2에서 추가 (Apple Sign-In은 App Store 제출 전 필수)
 - **Task 관리**: CRUD + 색상 지정 (아이콘, 정렬은 Phase 2)
 - **시간 기록**: Start/Stop + 자동 전환 + 단일 활성 제약
 - **기본 통계**: 오늘의 기록 요약 (Task별 시간), 주별 막대 차트
+
+---
+
+## 5. API Endpoints (Phase 1)
+
+인증은 Supabase Auth 클라이언트를 통해 처리하며, 아래는 NestJS API 서버의 엔드포인트.
+
+### Auth
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/auth/signup` | Email/Password 회원가입 |
+| POST | `/auth/login` | 로그인 (JWT 반환) |
+| POST | `/auth/logout` | 로그아웃 |
+| GET | `/auth/me` | 현재 사용자 프로필 조회 |
+
+### Tasks
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/tasks` | 사용자의 Task 목록 조회 (아카이브 제외) |
+| POST | `/tasks` | Task 생성 |
+| PATCH | `/tasks/:id` | Task 수정 |
+| DELETE | `/tasks/:id` | Task 삭제 (soft delete → 아카이브) |
+
+### Time Entries
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| POST | `/time-entries/start` | 타이머 시작 (기존 활성 타이머 자동 종료) |
+| POST | `/time-entries/stop` | 현재 활성 타이머 종료 |
+| GET | `/time-entries?date=YYYY-MM-DD` | 특정 날짜 기록 조회 |
+| GET | `/time-entries?from=&to=` | 기간별 기록 조회 |
+| PATCH | `/time-entries/:id` | 기록 수동 편집 (startedAt, stoppedAt) |
+| GET | `/time-entries/active` | 현재 활성 타이머 조회 |
+
+### Statistics
+
+| Method | Endpoint | 설명 |
+|--------|----------|------|
+| GET | `/stats/daily?date=YYYY-MM-DD` | 일별 Task별 시간 요약 |
+| GET | `/stats/weekly?date=YYYY-MM-DD` | 주별 통계 (해당 주) |
+
+---
+
+## 6. Edge Cases & Error Handling
+
+| 시나리오 | 처리 방식 |
+|---------|----------|
+| Task 삭제 시 기존 TimeEntry | Soft delete (아카이브). 기존 TimeEntry는 유지되며 통계에 포함 |
+| 장시간 방치 타이머 (24h+) | 클라이언트에서 경고 표시. 사용자가 수동으로 종료 시간 편집 가능 |
+| 동시 디바이스 타이머 충돌 | 서버의 partial unique index가 방지. 두 번째 요청은 409 Conflict 반환 |
+| Task 없는 상태 (empty state) | 온보딩 가이드 표시: "첫 번째 Task를 만들어보세요" |
+| 네트워크 오류 시 Start/Stop | Phase 1: 에러 토스트 표시 + 재시도 버튼. Phase 2: 오프라인 큐잉 |
 
 ---
 
