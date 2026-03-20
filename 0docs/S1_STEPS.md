@@ -10,6 +10,17 @@
 
 > 기능 단위 vertical slice: 각 슬라이스가 끝나면 동작하는 기능이 하나 완성됨.
 
+### D0: Shared Domain Model 구현
+
+> S1~S4에서 공통으로 사용할 DDD 도메인 모델을 `@tkbetter/domain`에 선행 구현한다.
+> 상세: [`docs/ddd/D0_DDD.md`](ddd/D0_DDD.md)
+
+- [ ] Value Objects: `Duration`, `Color`, `TimeRange`
+- [ ] Entities: `Task`, `TimeEntry`, `UserProfile`
+- [ ] Domain Service: `TimerService`
+- [ ] Repository Interfaces: `TaskRepository`, `TimeEntryRepository`
+- [ ] Barrel Export & type-check 통과
+
 ### S0: 프로젝트 기반 (Supabase + API 클라이언트)
 
 - [ ] Supabase 프로젝트 생성 및 환경변수 설정 (`.env`)
