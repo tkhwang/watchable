@@ -60,7 +60,7 @@
 | 3   | `TimeRange` | `tracking/value-objects/time-range.ts` | `running()`, `stop()`, `duration()`, `isRunning`      | `ddd/design/tracking/time-range.md` |
 
 - [x] `Duration` — 시간 길이 (seconds 기반, format/add/비교) ✅ 26 tests
-- [ ] `Color` — hex 색상 (검증, RGB 변환, contrast 텍스트 색상)
+- [x] `Color` — hex 색상 (검증, RGB 변환, contrast 텍스트 색상) ✅ 17 tests
 - [ ] `TimeRange` — 시작/종료 시간 범위 (running 상태, duration 계산, stop)
 
 #### Entities
