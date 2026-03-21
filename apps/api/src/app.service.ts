@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { APP_NAME } from '@tkbetter/domain';
+import { APP_NAME } from '@life-logs/domain';
 
 @Injectable()
 export class AppService {

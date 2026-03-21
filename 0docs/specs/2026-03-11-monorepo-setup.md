@@ -22,7 +22,7 @@
 - `.gitignore` — 루트 gitignore (node_modules, dist, .turbo 등)
 
 ### packages/shared
-- `packages/shared/package.json` — `@tkbetter/shared` 패키지 정의
+- `packages/shared/package.json` — `@life-logs/shared` 패키지 정의
 - `packages/shared/tsconfig.json` — tsconfig.base.json extends
 - `packages/shared/src/index.ts` — 진입점
 
@@ -50,7 +50,7 @@
 
 ```json
 {
-  "name": "@tkbetter/monorepo",
+  "name": "@life-logs/monorepo",
   "private": true,
   "packageManager": "pnpm@10.28.1",
   "scripts": {
@@ -285,7 +285,7 @@ Run: `mkdir -p packages/shared/src`
 
 ```json
 {
-  "name": "@tkbetter/shared",
+  "name": "@life-logs/shared",
   "version": "0.0.0",
   "private": true,
   "main": "./src/index.ts",
@@ -319,7 +319,7 @@ export const APP_NAME = 'tkbetter';
 
 ```bash
 git add packages/shared/
-git commit -m "chore: add @tkbetter/shared package"
+git commit -m "chore: add @life-logs/shared package"
 ```
 
 ---
@@ -339,15 +339,15 @@ This generates the NestJS boilerplate inside `apps/api/`.
 
 - [ ] **Step 2: Update apps/api/package.json name**
 
-Change the `name` field to `"@tkbetter/api"`.
+Change the `name` field to `"@life-logs/api"`.
 
 - [ ] **Step 3: Update apps/api/tsconfig.json to extend base**
 
 Add `"extends": "../../tsconfig.base.json"` and keep NestJS-specific overrides.
 
-- [ ] **Step 4: Add @tkbetter/shared dependency**
+- [ ] **Step 4: Add @life-logs/shared dependency**
 
-Run: `pnpm --filter @tkbetter/api add @tkbetter/shared@workspace:*`
+Run: `pnpm --filter @life-logs/api add @life-logs/shared@workspace:*`
 
 - [ ] **Step 5: Add lint script using root eslint**
 
@@ -358,7 +358,7 @@ Ensure `apps/api/package.json` scripts include:
 
 - [ ] **Step 6: Verify NestJS builds**
 
-Run: `pnpm --filter @tkbetter/api build`
+Run: `pnpm --filter @life-logs/api build`
 Expected: Build succeeds, dist/ created
 
 - [ ] **Step 7: Commit**
@@ -383,15 +383,15 @@ Run: `pnpm dlx create-next-app@latest apps/web --typescript --tailwind --eslint 
 
 - [ ] **Step 2: Update apps/web/package.json name**
 
-Change the `name` field to `"@tkbetter/web"`.
+Change the `name` field to `"@life-logs/web"`.
 
 - [ ] **Step 3: Update apps/web/tsconfig.json to extend base**
 
 Add `"extends": "../../tsconfig.base.json"` and keep Next.js-specific overrides (jsx, paths, plugins).
 
-- [ ] **Step 4: Add @tkbetter/shared dependency**
+- [ ] **Step 4: Add @life-logs/shared dependency**
 
-Run: `pnpm --filter @tkbetter/web add @tkbetter/shared@workspace:*`
+Run: `pnpm --filter @life-logs/web add @life-logs/shared@workspace:*`
 
 - [ ] **Step 5: Add type-check script**
 
@@ -402,7 +402,7 @@ Add to `apps/web/package.json` scripts:
 
 - [ ] **Step 6: Verify Next.js builds**
 
-Run: `pnpm --filter @tkbetter/web build`
+Run: `pnpm --filter @life-logs/web build`
 Expected: Build succeeds, .next/ created
 
 - [ ] **Step 7: Commit**
@@ -427,15 +427,15 @@ Run: `pnpm dlx create-expo-app@latest apps/mobile --template blank-typescript`
 
 - [ ] **Step 2: Update apps/mobile/package.json name**
 
-Change the `name` field to `"@tkbetter/mobile"`.
+Change the `name` field to `"@life-logs/mobile"`.
 
 - [ ] **Step 3: Update apps/mobile/tsconfig.json to extend base**
 
 Add `"extends": "../../tsconfig.base.json"` and keep Expo-specific overrides (jsx, paths).
 
-- [ ] **Step 4: Add @tkbetter/shared dependency**
+- [ ] **Step 4: Add @life-logs/shared dependency**
 
-Run: `pnpm --filter @tkbetter/mobile add @tkbetter/shared@workspace:*`
+Run: `pnpm --filter @life-logs/mobile add @life-logs/shared@workspace:*`
 
 - [ ] **Step 5: Add lint and type-check scripts**
 

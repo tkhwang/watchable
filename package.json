@@ -1,5 +1,5 @@
 {
-  "name": "@tkbetter/monorepo",
+  "name": "@life-logs/monorepo",
   "private": true,
   "packageManager": "pnpm@10.32.1",
   "scripts": {
@@ -7,7 +7,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
-    "clean": "turbo clean"
+    "clean": "turbo clean && rm -rf node_modules apps/*/node_modules packages/*/node_modules",
+    "clean:dist": "rm -rf apps/*/dist packages/*/dist",
+    "clean:all": "pnpm run clean:dist && pnpm run clean && rm -rf .turbo apps/*/.turbo packages/*/.turbo"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["@nestjs/core", "sharp"]

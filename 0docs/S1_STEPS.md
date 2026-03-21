@@ -22,7 +22,7 @@
 
 ### D0: Shared Domain Model 구현
 
-> **패키지**: `@tkbetter/domain` (`packages/domain/src/`)
+> **패키지**: `@life-logs/domain` (`packages/domain/src/`)
 > **워크플로우**: Spec → Test → Impl (TDD)
 > **의존성**: `Base Classes → Value Object → Entity → Domain Service`
 > **설계 원본**: [`specs/2026-03-20-fullstack-ddd-design.md`](specs/2026-03-20-fullstack-ddd-design.md)
@@ -87,7 +87,7 @@
 #### Barrel Export & 검증
 
 - [ ] `domain/index.ts` barrel export 구성
-- [ ] `pnpm --filter @tkbetter/domain type-check` 통과 확인
+- [ ] `pnpm --filter @life-logs/domain type-check` 통과 확인
 
 #### 공통 패턴
 
