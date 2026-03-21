@@ -1,4 +1,4 @@
-import { APP_NAME } from '@tkbetter/domain';
+import { APP_NAME } from '@life-logs/domain';
 
 export default function Home() {
   return (

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { APP_NAME } from '@tkbetter/domain';
+import { APP_NAME } from '@life-logs/domain';
 
 export default function HomeScreen() {
   return (
