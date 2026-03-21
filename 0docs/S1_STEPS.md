@@ -38,15 +38,17 @@
 | 0-3 | `ValueObject<Props>` | `core/value-object.ts`     | 불변 값 타입 추상 기반 (equals, props freeze)         |
 | 0-4 | `UniqueEntityID`     | `core/unique-entity-id.ts` | Entity ID VO (ValueObject 상속, 빈 문자열 검증)       |
 | 0-5 | `Entity<Props>`      | `core/entity.ts`           | ID 기반 엔티티 추상 기반 (UniqueEntityID, props 가변) |
-| 0-6 | `AggregateRoot<T>`   | `core/aggregate-root.ts`   | Entity 확장, 도메인 이벤트 수집                       |
-| 0-7 | Barrel               | `core/index.ts`            | core 모듈 re-export                                   |
+| 0-6 | `IDomainEvent`       | `core/domain-event.ts`     | 도메인 이벤트 인터페이스 (eventName, occurredOn, aggregateId) |
+| 0-7 | `AggregateRoot<Props>` | `core/aggregate-root.ts` | Entity 확장, 도메인 이벤트 수집 (#domainEvents, pullDomainEvents) |
+| 0-8 | Barrel               | `core/index.ts`            | core 모듈 re-export                                   |
 
 - [x] `DomainError` — abstract class, code + message, 서브클래스 강제
 - [x] `Result` — `ok()` / `fail()` 헬퍼, factory method에서 사용
 - [x] `ValueObject<Props>` — props freeze, equals 기본 구현
 - [x] `UniqueEntityID` — ValueObject 상속, `create(value)` → Result, 빈 문자열 검증
 - [x] `Entity<Props>` — UniqueEntityID + props 가변, constructor 체크 + ID equals
-- [ ] `AggregateRoot<T>` — Aggregate Root 추상 기반
+- [x] `IDomainEvent` — interface (eventName, occurredOn, aggregateId)
+- [x] `AggregateRoot<Props>` — Entity 확장, #domainEvents, addDomainEvent, pullDomainEvents
 - [x] `core/index.ts` — barrel export 구성 완료
 
 #### Value Objects
