@@ -19,9 +19,13 @@
 ## Architecture
 
 - DDD 중심 개발: 비즈니스 로직은 반드시 domain layer에 먼저 구현
-- Domain layer (`packages/domain`): Entity, ValueObject, AggregateRoot, Result — 외부 의존성 없음 (pure TypeScript)
-- **Backend**: Controller → Application Service → Domain layer. 비즈니스 로직은 Domain에, 인프라는 Infrastructure에
-- **Frontend**: API 응답 → Domain class 매핑 후 도메인 메서드 활용 (e.g. `task.canStartTimer()`, `color.contrastTextColor()`)
+- **Bounded Contexts**: Tracking (Core) + Identity (Supporting). 상세: `0docs/ddd/design/bounded-contexts.md`
+  - `tracking/`: Task, TimeEntry, TimerService, Color, Duration, TimeRange
+  - `identity/`: UserProfile
+  - `core/`: Shared Kernel (Entity, ValueObject, AggregateRoot, Result, DomainError)
+  - BC 간 참조는 `userId` (string)만. 직접 import 금지
+- **Backend**: Controller → Application Service → Domain layer
+- **Frontend**: API 응답 → Domain class 매핑 후 도메인 메서드 활용
 - 모든 앱은 @life-logs/domain을 `workspace:*` 로 참조
 - Turbo: build는 `^build` 의존, dev는 persistent
 
