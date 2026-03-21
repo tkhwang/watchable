@@ -15,6 +15,7 @@
 > S1~S4에서 공통으로 사용할 DDD 도메인 모델을 `@tkbetter/domain`에 선행 구현한다.
 > 상세: [`docs/ddd/D0_DDD.md`](ddd/D0_DDD.md)
 
+- [ ] Base Classes: `DomainError`, `DomainEvent`, `ValueObject<T>`, `Entity<T>`, `AggregateRoot<T>`
 - [ ] Value Objects: `Duration`, `Color`, `TimeRange`
 - [ ] Entities: `Task`, `TimeEntry`, `UserProfile`
 - [ ] Domain Service: `TimerService`

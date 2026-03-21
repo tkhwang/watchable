@@ -33,18 +33,61 @@
 의존하는 것이 없는 블록부터 구현한다:
 
 ```
-Value Object → Entity → Domain Service
+Base Classes → Value Object → Entity → Domain Service
 ```
 
-- **Value Object**: 외부 의존 없음 — 가장 먼저 구현
+- **Base Classes**: 외부 의존 없음 — 가장 먼저 구현
+- **Value Object**: Base Classes에 의존 — Base Classes 완성 후 구현
 - **Entity**: Value Object에 의존 — VO 완성 후 구현
 - **Domain Service**: Entity·VO에 의존 — 마지막에 구현
+
+---
+
+## Base Classes (공통 기반)
+
+> 모든 VO·Entity·Aggregate가 상속하는 추상 기반 클래스.
+> `packages/domain/src/core/` 에 위치하며, concrete 타입보다 먼저 구현한다.
+
+### 의존성 순서
+
+```
+DomainError, DomainEvent → ValueObject → Entity → AggregateRoot
+```
+
+### 구성
+
+| #   | Name              | 파일                     | 역할                                                    |
+| --- | ----------------- | ------------------------ | ------------------------------------------------------- |
+| 0-1 | `DomainError`     | `core/domain-error.ts`   | 도메인 전용 에러 (code + message)                       |
+| 0-2 | `DomainEvent`     | `core/domain-event.ts`   | 도메인 이벤트 인터페이스 (Phase 2+)                     |
+| 0-3 | `ValueObject<T>`  | `core/value-object.ts`   | 불변 값 타입 추상 기반 (equals, toJSON)                 |
+| 0-4 | `Entity<T>`       | `core/entity.ts`         | ID 기반 엔티티 추상 기반 (id, createdAt, updatedAt, touch) |
+| 0-5 | `AggregateRoot<T>`| `core/aggregate-root.ts` | Entity 확장, 도메인 이벤트 수집                         |
+| 0-6 | Barrel            | `core/index.ts`          | core 모듈 re-export                                    |
+
+### 설계 핵심
+
+- **Generic `T`**: JSON 직렬화 shape (toJSON 반환 타입)
+- **ValueObject**: props 저장 없음, 서브클래스가 자체 필드 관리. `equals()` + `toJSON()` 계약만 제공
+- **Entity**: `protected constructor(id, createdAt, updatedAt)`, `protected touch()` 로 updatedAt 갱신
+- **AggregateRoot**: `protected addDomainEvent()`, `clearDomainEvents()`, `domainEvents` getter
+- **DomainError**: `Error` 확장, `code` 필드 추가 (e.g. `'INVALID_DURATION'`)
+- **DomainEvent**: 인터페이스 (`eventName`, `occurredAt`, `aggregateId`)
 
 ---
 
 ## 진행 현황
 
 > S1~S4에서 공통으로 사용할 DDD 도메인 모델을 `@tkbetter/domain`에 선행 구현한다.
+
+### Base Classes
+
+- [ ] `DomainError` — 도메인 전용 에러 (code + message)
+- [ ] `DomainEvent` — 도메인 이벤트 인터페이스
+- [ ] `ValueObject<T>` — 불변 값 타입 추상 기반
+- [ ] `Entity<T>` — ID 기반 엔티티 추상 기반
+- [ ] `AggregateRoot<T>` — Aggregate Root 추상 기반
+- [ ] `core/index.ts` — barrel export
 
 ### Value Objects
 
