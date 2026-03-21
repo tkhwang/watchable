@@ -2,39 +2,64 @@ import { describe, it, expect } from 'vitest';
 import { Money, Price } from './fixtures/value-object.fixture';
 
 describe('ValueObject', () => {
-  it('equals returns true for same type with same values', () => {
-    const a = Money.create(100, 'USD');
-    const b = Money.create(100, 'USD');
-    expect(a.ok && b.ok && a.value.equals(b.value)).toBe(true);
+  describe('create', () => {
+    describe('정상적인 경우 생성에 성공한다', () => {
+      it('유효한 값으로 생성하면 props에 접근 가능', () => {
+        const result = Money.create(100, 'USD');
+
+        expect(result.ok).toBe(true);
+        if (result.ok) {
+          expect(result.value.amount).toBe(100);
+          expect(result.value.currency).toBe('USD');
+        }
+      });
+    });
+
+    describe('비정상적인 경우 생성에 실패한다', () => {
+      it('음수 금액이면 실패한다', () => {
+        const result = Money.create(-1, 'USD');
+
+        expect(result.ok).toBe(false);
+        if (!result.ok) {
+          expect(result.error.code).toBe('INVALID_MONEY');
+        }
+      });
+    });
   });
 
-  it('equals returns false for same type with different values', () => {
-    const a = Money.create(100, 'USD');
-    const b = Money.create(200, 'USD');
-    expect(a.ok && b.ok && a.value.equals(b.value)).toBe(false);
+  describe('equals', () => {
+    it('같은 타입 + 같은 값 → true', () => {
+      const a = Money.create(100, 'USD');
+      const b = Money.create(100, 'USD');
+
+      expect(a.ok && b.ok && a.value.equals(b.value)).toBe(true);
+    });
+
+    it('같은 타입 + 다른 값 → false', () => {
+      const a = Money.create(100, 'USD');
+      const b = Money.create(200, 'USD');
+
+      expect(a.ok && b.ok && a.value.equals(b.value)).toBe(false);
+    });
+
+    it('다른 VO 타입 + 같은 props shape → false', () => {
+      const money = Money.create(100, 'USD');
+      const price = Price.create(100, 'USD');
+
+      expect(money.ok && price.ok && money.value.equals(price.value)).toBe(false);
+    });
   });
 
-  it('equals returns false for different VO types with same props shape', () => {
-    const money = Money.create(100, 'USD');
-    const price = Price.create(100, 'USD');
-    expect(money.ok && price.ok && money.value.equals(price.value)).toBe(false);
-  });
+  describe('불변성', () => {
+    it('props는 frozen되어 변경 불가', () => {
+      const result = Money.create(100, 'USD');
 
-  it('props are frozen and cannot be mutated', () => {
-    const result = Money.create(100, 'USD');
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(() => {
-        (result.value as any).props.amount = 999;
-      }).toThrow();
-    }
-  });
-
-  it('create returns fail for invalid input', () => {
-    const result = Money.create(-1, 'USD');
-    expect(result.ok).toBe(false);
-    if (!result.ok) {
-      expect(result.error.code).toBe('INVALID_MONEY');
-    }
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(() => {
+          (result.value as any).props.amount = 999;
+        }).toThrow();
+      }
+    });
   });
 });

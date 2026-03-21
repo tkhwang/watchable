@@ -1,5 +1,15 @@
 # tkbetter Time Tracking App - Implementation Steps
 
+## 개발 워크플로우
+
+각 빌딩 블록은 **Spec → Test → Impl** 순서로 개발한다.
+
+- **Spec**: `0docs/ddd/design/` 에 설계 문서 작성 (invariants, 핵심 행동, edge cases)
+- **Test (Red)**: spec 기반 테스트 작성 → 모든 테스트 실패 확인
+- **Impl (Green → Refactor)**: 최소 구현 → 통과 → 리팩터링
+
+---
+
 ## Phase 0: 프로젝트 셋업 ✅
 
 - [x] 모노레포 설정 (pnpm + Turborepo)
@@ -17,40 +27,34 @@
 > **의존성**: `Base Classes → Value Object → Entity → Domain Service`
 > **설계 원본**: [`specs/2026-03-20-fullstack-ddd-design.md`](specs/2026-03-20-fullstack-ddd-design.md)
 
-#### 개발 워크플로우
-
-각 빌딩 블록은 **Spec → Test → Impl** 순서로 개발한다.
-
-- **Spec**: `0docs/ddd/design/` 에 설계 문서 작성 (invariants, 핵심 행동, edge cases)
-- **Test (Red)**: spec 기반 테스트 작성 → 모든 테스트 실패 확인
-- **Impl (Green → Refactor)**: 최소 구현 → 통과 → 리팩터링
-
 #### Base Classes
 
 > `packages/domain/src/core/` — 모든 VO·Entity·Aggregate가 상속하는 추상 기반
 
-| #   | Name              | 파일                     | 역할                                                    |
-| --- | ----------------- | ------------------------ | ------------------------------------------------------- |
-| 0-1 | `DomainError`     | `core/domain-error.ts`   | 도메인 전용 에러 (code + message)                       |
-| 0-2 | `Result`          | `core/result.ts`         | Result 패턴 (ok/fail)                                   |
-| 0-3 | `ValueObject<Props>` | `core/value-object.ts` | 불변 값 타입 추상 기반 (equals, props freeze)           |
-| 0-4 | `Entity<T>`       | `core/entity.ts`         | ID 기반 엔티티 추상 기반 (id, createdAt, updatedAt, touch) |
-| 0-5 | `AggregateRoot<T>`| `core/aggregate-root.ts` | Entity 확장, 도메인 이벤트 수집                         |
-| 0-6 | Barrel            | `core/index.ts`          | core 모듈 re-export                                    |
+| #   | Name                 | 파일                       | 역할                                                  |
+| --- | -------------------- | -------------------------- | ----------------------------------------------------- |
+| 0-1 | `DomainError`        | `core/domain-error.ts`     | 도메인 전용 에러 (abstract, code + message)           |
+| 0-2 | `Result`             | `core/result.ts`           | Result 패턴 (ok/fail)                                 |
+| 0-3 | `ValueObject<Props>` | `core/value-object.ts`     | 불변 값 타입 추상 기반 (equals, props freeze)         |
+| 0-4 | `UniqueEntityID`     | `core/unique-entity-id.ts` | Entity ID VO (ValueObject 상속, 빈 문자열 검증)       |
+| 0-5 | `Entity<Props>`      | `core/entity.ts`           | ID 기반 엔티티 추상 기반 (UniqueEntityID, props 가변) |
+| 0-6 | `AggregateRoot<T>`   | `core/aggregate-root.ts`   | Entity 확장, 도메인 이벤트 수집                       |
+| 0-7 | Barrel               | `core/index.ts`            | core 모듈 re-export                                   |
 
 - [x] `DomainError` — abstract class, code + message, 서브클래스 강제
 - [x] `Result` — `ok()` / `fail()` 헬퍼, factory method에서 사용
 - [x] `ValueObject<Props>` — props freeze, equals 기본 구현
-- [ ] `Entity<T>` — ID 기반 엔티티 추상 기반
+- [x] `UniqueEntityID` — ValueObject 상속, `create(value)` → Result, 빈 문자열 검증
+- [x] `Entity<Props>` — UniqueEntityID + props 가변, constructor 체크 + ID equals
 - [ ] `AggregateRoot<T>` — Aggregate Root 추상 기반
-- [ ] `core/index.ts` — barrel export 완성
+- [x] `core/index.ts` — barrel export 구성 완료
 
 #### Value Objects
 
-| #   | Name        | 파일                          | 핵심 행동                                             | 설계 문서                          |
-| --- | ----------- | ----------------------------- | ----------------------------------------------------- | ---------------------------------- |
-| 1   | `Duration`  | `value-objects/duration.ts`   | `fromSeconds()`, `fromMinutes()`, `format()`, `add()` | `ddd/design/value-objects/duration.md`  |
-| 2   | `Color`     | `value-objects/color.ts`      | `fromHex()`, `rgb`, `contrastTextColor()`             | `ddd/design/value-objects/color.md`     |
+| #   | Name        | 파일                          | 핵심 행동                                             | 설계 문서                                |
+| --- | ----------- | ----------------------------- | ----------------------------------------------------- | ---------------------------------------- |
+| 1   | `Duration`  | `value-objects/duration.ts`   | `fromSeconds()`, `fromMinutes()`, `format()`, `add()` | `ddd/design/value-objects/duration.md`   |
+| 2   | `Color`     | `value-objects/color.ts`      | `fromHex()`, `rgb`, `contrastTextColor()`             | `ddd/design/value-objects/color.md`      |
 | 3   | `TimeRange` | `value-objects/time-range.ts` | `running()`, `stop()`, `duration()`, `isRunning`      | `ddd/design/value-objects/time-range.md` |
 
 - [ ] `Duration` — 시간 길이 (seconds 기반, format/add/비교)
@@ -59,9 +63,9 @@
 
 #### Entities
 
-| #   | Name          | 파일                       | 핵심 행동                                                               | 설계 문서                          |
-| --- | ------------- | -------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
-| 4   | `Task`        | `entities/task.ts`         | `create()`, `rename()`, `changeColor()`, `archive()`, `canStartTimer()` | `ddd/design/entities/task.md`        |
+| #   | Name          | 파일                       | 핵심 행동                                                               | 설계 문서                             |
+| --- | ------------- | -------------------------- | ----------------------------------------------------------------------- | ------------------------------------- |
+| 4   | `Task`        | `entities/task.ts`         | `create()`, `rename()`, `changeColor()`, `archive()`, `canStartTimer()` | `ddd/design/entities/task.md`         |
 | 5   | `TimeEntry`   | `entities/time-entry.ts`   | `start()`, `stop()`, `duration()`, `editTimes()`                        | `ddd/design/entities/time-entry.md`   |
 | 6   | `UserProfile` | `entities/user-profile.ts` | `create()`, Pomodoro 기본값 관리                                        | `ddd/design/entities/user-profile.md` |
 

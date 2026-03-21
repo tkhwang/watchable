@@ -108,8 +108,6 @@ class Duration extends ValueObject<{ seconds: number }> {
   add(other: Duration): Duration {
     return new Duration(this.seconds + other.seconds);
   }
-
-  toJSON(): { seconds: number } { return { ...this.props }; }
 }
 ```
 
