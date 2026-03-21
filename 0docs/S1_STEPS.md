@@ -12,15 +12,83 @@
 
 ### D0: Shared Domain Model 구현
 
-> S1~S4에서 공통으로 사용할 DDD 도메인 모델을 `@tkbetter/domain`에 선행 구현한다.
-> 상세: [`docs/ddd/D0_DDD.md`](ddd/D0_DDD.md)
+> **패키지**: `@tkbetter/domain` (`packages/domain/src/`)
+> **워크플로우**: Spec → Test → Impl (TDD)
+> **의존성**: `Base Classes → Value Object → Entity → Domain Service`
+> **설계 원본**: [`specs/2026-03-20-fullstack-ddd-design.md`](specs/2026-03-20-fullstack-ddd-design.md)
 
-- [ ] Base Classes: `DomainError`, `DomainEvent`, `ValueObject<T>`, `Entity<T>`, `AggregateRoot<T>`
-- [ ] Value Objects: `Duration`, `Color`, `TimeRange`
-- [ ] Entities: `Task`, `TimeEntry`, `UserProfile`
-- [ ] Domain Service: `TimerService`
-- [ ] Repository Interfaces: `TaskRepository`, `TimeEntryRepository`
-- [ ] Barrel Export & type-check 통과
+#### 개발 워크플로우
+
+각 빌딩 블록은 **Spec → Test → Impl** 순서로 개발한다.
+
+- **Spec**: `0docs/ddd/design/` 에 설계 문서 작성 (invariants, 핵심 행동, edge cases)
+- **Test (Red)**: spec 기반 테스트 작성 → 모든 테스트 실패 확인
+- **Impl (Green → Refactor)**: 최소 구현 → 통과 → 리팩터링
+
+#### Base Classes
+
+> `packages/domain/src/core/` — 모든 VO·Entity·Aggregate가 상속하는 추상 기반
+
+| #   | Name              | 파일                     | 역할                                                    |
+| --- | ----------------- | ------------------------ | ------------------------------------------------------- |
+| 0-1 | `DomainError`     | `core/domain-error.ts`   | 도메인 전용 에러 (code + message)                       |
+| 0-2 | `Result`          | `core/result.ts`         | Result 패턴 (ok/fail)                                   |
+| 0-3 | `ValueObject<Props>` | `core/value-object.ts` | 불변 값 타입 추상 기반 (equals, props freeze)           |
+| 0-4 | `Entity<T>`       | `core/entity.ts`         | ID 기반 엔티티 추상 기반 (id, createdAt, updatedAt, touch) |
+| 0-5 | `AggregateRoot<T>`| `core/aggregate-root.ts` | Entity 확장, 도메인 이벤트 수집                         |
+| 0-6 | Barrel            | `core/index.ts`          | core 모듈 re-export                                    |
+
+- [x] `DomainError` — abstract class, code + message, 서브클래스 강제
+- [x] `Result` — `ok()` / `fail()` 헬퍼, factory method에서 사용
+- [x] `ValueObject<Props>` — props freeze, equals 기본 구현
+- [ ] `Entity<T>` — ID 기반 엔티티 추상 기반
+- [ ] `AggregateRoot<T>` — Aggregate Root 추상 기반
+- [ ] `core/index.ts` — barrel export 완성
+
+#### Value Objects
+
+| #   | Name        | 파일                          | 핵심 행동                                             | 설계 문서                          |
+| --- | ----------- | ----------------------------- | ----------------------------------------------------- | ---------------------------------- |
+| 1   | `Duration`  | `value-objects/duration.ts`   | `fromSeconds()`, `fromMinutes()`, `format()`, `add()` | `ddd/design/value-objects/duration.md`  |
+| 2   | `Color`     | `value-objects/color.ts`      | `fromHex()`, `rgb`, `contrastTextColor()`             | `ddd/design/value-objects/color.md`     |
+| 3   | `TimeRange` | `value-objects/time-range.ts` | `running()`, `stop()`, `duration()`, `isRunning`      | `ddd/design/value-objects/time-range.md` |
+
+- [ ] `Duration` — 시간 길이 (seconds 기반, format/add/비교)
+- [ ] `Color` — hex 색상 (검증, RGB 변환, contrast 텍스트 색상)
+- [ ] `TimeRange` — 시작/종료 시간 범위 (running 상태, duration 계산, stop)
+
+#### Entities
+
+| #   | Name          | 파일                       | 핵심 행동                                                               | 설계 문서                          |
+| --- | ------------- | -------------------------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| 4   | `Task`        | `entities/task.ts`         | `create()`, `rename()`, `changeColor()`, `archive()`, `canStartTimer()` | `ddd/design/entities/task.md`        |
+| 5   | `TimeEntry`   | `entities/time-entry.ts`   | `start()`, `stop()`, `duration()`, `editTimes()`                        | `ddd/design/entities/time-entry.md`   |
+| 6   | `UserProfile` | `entities/user-profile.ts` | `create()`, Pomodoro 기본값 관리                                        | `ddd/design/entities/user-profile.md` |
+
+- [ ] `Task` — Task 생성/수정/아카이브 (Color VO 포함)
+- [ ] `TimeEntry` — 시간 기록 (TimeRange/Duration VO 포함, start/stop/editTimes)
+- [ ] `UserProfile` — 사용자 프로필 (Pomodoro 기본값 포함)
+
+#### Domain Service
+
+- [ ] `TimerService` — 자동 전환 로직 (단일 활성 타이머 제약, archived task 방지)
+
+#### Repository Interfaces
+
+- [ ] `TaskRepository` — Task 영속화 인터페이스
+- [ ] `TimeEntryRepository` — TimeEntry 영속화 인터페이스
+
+#### Barrel Export & 검증
+
+- [ ] `domain/index.ts` barrel export 구성
+- [ ] `pnpm --filter @tkbetter/domain type-check` 통과 확인
+
+#### 공통 패턴
+
+- **Class 기반 Rich Domain Model**: 도메인 로직을 메서드로 캡슐화
+- **Private constructor + Static factory**: `create()` → `Result<T, DomainError>` 반환
+- **Self-hydrating serialization**: `fromJSON()` / `toJSON()` 내장
+- **외부 의존성 없음**: 순수 TypeScript만 사용
 
 ### S0: 프로젝트 기반 (Supabase + API 클라이언트)
 
