@@ -118,7 +118,7 @@ Supabase Auth 기반 인증.
 | Backend | NestJS 11 | `apps/api` |
 | DB | Supabase (PostgreSQL) | Managed, RLS 활용 |
 | Auth | Supabase Auth | Email + Google + Apple |
-| Shared | `@tkbetter/shared` | 도메인 모델, 타입, 유틸 |
+| Shared | `@life-logs/shared` | 도메인 모델, 타입, 유틸 |
 | Monorepo | pnpm + Turborepo | 기존 설정 활용 |
 
 ### Architecture: Tactical DDD
@@ -149,7 +149,7 @@ Infrastructure (Repository 구현, Supabase Client)
 
 - **Domain 계층**은 외부 의존성이 없다 (순수 TypeScript).
 - **Infrastructure**가 Domain의 Repository 인터페이스를 구현한다.
-- `@tkbetter/shared`에 Domain 계층을 위치시켜 모든 앱에서 공유한다.
+- `@life-logs/shared`에 Domain 계층을 위치시켜 모든 앱에서 공유한다.
 - **Value Object**는 도메인 계층에서 타입으로 강제하고, DB에는 primitive로 저장한다.
 
 #### Aggregate 설계 원칙
@@ -370,13 +370,13 @@ Task 선택 → Pomodoro 모드 활성화 → 25분 집중 시작
 
 ### 기존 모노레포 구조
 
-현재 `@tkbetter` 모노레포가 구성되어 있으며, 아래 앱/패키지가 존재한다:
+현재 `@life-logs` 모노레포가 구성되어 있으며, 아래 앱/패키지가 존재한다:
 
 ```
 apps/mobile    # React Native Expo
 apps/web       # Next.js
 apps/api       # NestJS
-packages/shared # @tkbetter/shared
+packages/shared # @life-logs/shared
 ```
 
 자세한 내용은 `docs/superpowers/specs/2026-03-11-monorepo-setup-design.md` 참조.

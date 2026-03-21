@@ -1,5 +1,5 @@
 {
-  "name": "@tkbetter/mobile",
+  "name": "@life-logs/mobile",
   "version": "0.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -12,7 +12,7 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
-    "@tkbetter/shared": "workspace:*",
+    "@life-logs/domain": "workspace:*",
     "expo": "~52.0.0",
     "expo-router": "~4.0.0",
     "expo-status-bar": "~2.0.0",

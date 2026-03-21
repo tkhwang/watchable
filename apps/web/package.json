@@ -1,5 +1,5 @@
 {
-  "name": "@tkbetter/web",
+  "name": "@life-logs/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@tkbetter/shared": "workspace:*",
+    "@life-logs/domain": "workspace:*",
     "next": "^16.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

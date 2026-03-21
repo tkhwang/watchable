@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@tkbetter/shared'],
+  transpilePackages: ['@life-logs/domain'],
   eslint: {
     ignoreDuringBuilds: true,
   },

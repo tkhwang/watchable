@@ -1,12 +1,15 @@
 {
-  "name": "@tkbetter/api",
+  "name": "@life-logs/api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "predev": "pnpm --filter @life-logs/domain build",
+    "prestart": "pnpm --filter @life-logs/domain build",
+    "prestart:prod": "pnpm --filter @life-logs/domain build",
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "nest start",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/main.js",
     "lint": "eslint \"{src,test}/**/*.ts\"",
     "type-check": "tsc --noEmit",
     "test": "jest",
@@ -16,13 +19,13 @@
     "@nestjs/common": "^11.0.16",
     "@nestjs/core": "^11.0.16",
     "@nestjs/platform-express": "^11.0.16",
-    "@tkbetter/shared": "workspace:*",
+    "@life-logs/domain": "workspace:*",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.16",
-    "@nestjs/schematics": "^11.0.16",
+    "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.16",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.0",
