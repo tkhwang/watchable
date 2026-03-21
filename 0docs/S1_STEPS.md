@@ -31,16 +31,16 @@
 
 > `packages/domain/src/core/` — 모든 VO·Entity·Aggregate가 상속하는 추상 기반
 
-| #   | Name                 | 파일                       | 역할                                                  |
-| --- | -------------------- | -------------------------- | ----------------------------------------------------- |
-| 0-1 | `DomainError`        | `core/domain-error.ts`     | 도메인 전용 에러 (abstract, code + message)           |
-| 0-2 | `Result`             | `core/result.ts`           | Result 패턴 (ok/fail)                                 |
-| 0-3 | `ValueObject<Props>` | `core/value-object.ts`     | 불변 값 타입 추상 기반 (equals, props freeze)         |
-| 0-4 | `UniqueEntityID`     | `core/unique-entity-id.ts` | Entity ID VO (ValueObject 상속, 빈 문자열 검증)       |
-| 0-5 | `Entity<Props>`      | `core/entity.ts`           | ID 기반 엔티티 추상 기반 (UniqueEntityID, props 가변) |
-| 0-6 | `IDomainEvent`       | `core/domain-event.ts`     | 도메인 이벤트 인터페이스 (eventName, occurredOn, aggregateId) |
-| 0-7 | `AggregateRoot<Props>` | `core/aggregate-root.ts` | Entity 확장, 도메인 이벤트 수집 (#domainEvents, pullDomainEvents) |
-| 0-8 | Barrel               | `core/index.ts`            | core 모듈 re-export                                   |
+| #   | Name                   | 파일                       | 역할                                                              |
+| --- | ---------------------- | -------------------------- | ----------------------------------------------------------------- |
+| 0-1 | `DomainError`          | `core/domain-error.ts`     | 도메인 전용 에러 (abstract, code + message)                       |
+| 0-2 | `Result`               | `core/result.ts`           | Result 패턴 (ok/fail)                                             |
+| 0-3 | `ValueObject<Props>`   | `core/value-object.ts`     | 불변 값 타입 추상 기반 (equals, props freeze)                     |
+| 0-4 | `UniqueEntityID`       | `core/unique-entity-id.ts` | Entity ID VO (ValueObject 상속, 빈 문자열 검증)                   |
+| 0-5 | `Entity<Props>`        | `core/entity.ts`           | ID 기반 엔티티 추상 기반 (UniqueEntityID, props 가변)             |
+| 0-6 | `IDomainEvent`         | `core/domain-event.ts`     | 도메인 이벤트 인터페이스 (eventName, occurredOn, aggregateId)     |
+| 0-7 | `AggregateRoot<Props>` | `core/aggregate-root.ts`   | Entity 확장, 도메인 이벤트 수집 (#domainEvents, pullDomainEvents) |
+| 0-8 | Barrel                 | `core/index.ts`            | core 모듈 re-export                                               |
 
 - [x] `DomainError` — abstract class, code + message, 서브클래스 강제
 - [x] `Result` — `ok()` / `fail()` 헬퍼, factory method에서 사용
@@ -53,13 +53,13 @@
 
 #### Value Objects
 
-| #   | Name        | 파일                          | 핵심 행동                                             | 설계 문서                                |
-| --- | ----------- | ----------------------------- | ----------------------------------------------------- | ---------------------------------------- |
-| 1   | `Duration`  | `value-objects/duration.ts`   | `fromSeconds()`, `fromMinutes()`, `format()`, `add()` | `ddd/design/value-objects/duration.md`   |
-| 2   | `Color`     | `value-objects/color.ts`      | `fromHex()`, `rgb`, `contrastTextColor()`             | `ddd/design/value-objects/color.md`      |
-| 3   | `TimeRange` | `value-objects/time-range.ts` | `running()`, `stop()`, `duration()`, `isRunning`      | `ddd/design/value-objects/time-range.md` |
+| #   | Name        | 파일                                   | 핵심 행동                                             | 설계 문서                           |
+| --- | ----------- | -------------------------------------- | ----------------------------------------------------- | ----------------------------------- |
+| 1   | `Duration`  | `tracking/value-objects/duration.ts`   | `fromSeconds()`, `fromMinutes()`, `format()`, `add()` | `ddd/design/tracking/duration.md`   |
+| 2   | `Color`     | `tracking/value-objects/color.ts`      | `fromHex()`, `rgb`, `contrastTextColor()`             | `ddd/design/tracking/color.md`      |
+| 3   | `TimeRange` | `tracking/value-objects/time-range.ts` | `running()`, `stop()`, `duration()`, `isRunning`      | `ddd/design/tracking/time-range.md` |
 
-- [ ] `Duration` — 시간 길이 (seconds 기반, format/add/비교)
+- [x] `Duration` — 시간 길이 (seconds 기반, format/add/비교) ✅ 26 tests
 - [ ] `Color` — hex 색상 (검증, RGB 변환, contrast 텍스트 색상)
 - [ ] `TimeRange` — 시작/종료 시간 범위 (running 상태, duration 계산, stop)
 
@@ -93,7 +93,7 @@
 
 - **Class 기반 Rich Domain Model**: 도메인 로직을 메서드로 캡슐화
 - **Private constructor + Static factory**: `create()` → `Result<T, DomainError>` 반환
-- **Self-hydrating serialization**: `fromJSON()` / `toJSON()` 내장
+- **Domain First, Persistence Later**: `fromJSON()` / `toJSON()` 은 Repository 도입 시 추가
 - **외부 의존성 없음**: 순수 TypeScript만 사용
 
 ### S0: 프로젝트 기반 (Supabase + API 클라이언트)

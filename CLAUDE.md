@@ -18,7 +18,7 @@
 
 ## Architecture
 
-- DDD 중심 개발: 비즈니스 로직은 반드시 domain layer에 먼저 구현
+- **Domain First, Persistence Later**: 도메인 로직 먼저 성숙 → 직렬화(`fromJSON`/`toJSON`), Repository는 나중에 도입
 - **Bounded Contexts**: Tracking (Core) + Identity (Supporting). 상세: `0docs/ddd/design/bounded-contexts.md`
   - `tracking/`: Task, TimeEntry, TimerService, Color, Duration, TimeRange
   - `identity/`: UserProfile
@@ -43,7 +43,7 @@
 - Single active timer per user (DB partial unique index로 강제)
 - Archived task에는 타이머 시작 불가
 - 새 task 시작 시 기존 active timer 자동 종료
-- Domain classes: `fromJSON()`/`toJSON()` 직렬화 패턴
+- 직렬화(`fromJSON`/`toJSON`): Repository 도입 시 추가 (Domain First, Persistence Later)
 - Phase 1: 온라인 필수, 오프라인은 Phase 2
 
 ## Dev Flow
