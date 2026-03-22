@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Duration, InvalidDurationError } from './duration';
+import { Duration, InvalidDurationError } from '../duration';
 
 describe('Duration', () => {
   describe('정상적인 경우 생성에 성공한다', () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Color, InvalidColorError } from './color';
+import { Color, InvalidColorError } from '../color';
 
 describe('Color', () => {
   describe('정상적인 경우 생성에 성공한다', () => {

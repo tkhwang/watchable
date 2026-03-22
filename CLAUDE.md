@@ -36,7 +36,7 @@
 - ESLint: @typescript-eslint/recommended, unused vars는 `_` prefix
 - TypeScript strict mode
 - 시간: UTC 저장, 클라이언트에서 유저 timezone 변환
-- Class method 순서: factory → command → query → getter → private (각 그룹 내 알파벳순)
+- Class method 순서: factory → override → command → query → getter → private (각 그룹 내 알파벳순)
 
 ## Domain Rules
 
