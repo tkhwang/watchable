@@ -14,13 +14,21 @@ export class User extends Entity<{ name: string; email: string }> {
     super(id, props);
   }
 
-  static create(id: UniqueEntityID, name: string, email: string): Result<User, InvalidUserEmailError> {
+  static create(
+    id: UniqueEntityID,
+    name: string,
+    email: string,
+  ): Result<User, InvalidUserEmailError> {
     if (!email.includes('@')) return fail(new InvalidUserEmailError());
     return ok(new User(id, { name, email }));
   }
 
-  get name(): string { return this.props.name; }
-  get email(): string { return this.props.email; }
+  get name(): string {
+    return this.props.name;
+  }
+  get email(): string {
+    return this.props.email;
+  }
 
   rename(newName: string): void {
     this.props.name = newName;

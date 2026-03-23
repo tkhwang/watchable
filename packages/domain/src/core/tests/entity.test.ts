@@ -14,7 +14,7 @@ describe('Entity', () => {
         }
       });
     });
- 
+
     describe('비정상적인 경우 생성에 실패한다', () => {
       it('유효하지 않은 이메일이면 실패한다', () => {
         const result = User.create(createId('u-1'), 'Alice', 'invalid-email');
@@ -49,6 +49,7 @@ describe('Entity', () => {
       const user = User.create(id, 'Alice', 'a@test.com');
       const post = Post.create(id, 'Hello');
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       expect(user.ok && user.value.equals(post as any)).toBe(false);
     });
 

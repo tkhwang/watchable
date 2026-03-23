@@ -1,12 +1,11 @@
 import { AggregateRoot } from '../../aggregate-root';
 import { UniqueEntityID } from '../../unique-entity-id';
-import type { IDomainEvent } from '../../domain-event';
 
 export class Order extends AggregateRoot<{ item: string; confirmed: boolean }> {
   private constructor(id: UniqueEntityID, props: { item: string; confirmed: boolean }) {
     super(id, props);
   }
- 
+
   static create(id: UniqueEntityID, item: string): Order {
     return new Order(id, { item, confirmed: false });
   }
@@ -20,8 +19,12 @@ export class Order extends AggregateRoot<{ item: string; confirmed: boolean }> {
     });
   }
 
-  get item(): string { return this.props.item; }
-  get confirmed(): boolean { return this.props.confirmed; }
+  get item(): string {
+    return this.props.item;
+  }
+  get confirmed(): boolean {
+    return this.props.confirmed;
+  }
 }
 
 /** Helper: create UniqueEntityID or throw (test-only) */

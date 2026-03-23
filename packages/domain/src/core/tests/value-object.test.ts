@@ -57,6 +57,7 @@ describe('ValueObject', () => {
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(() => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (result.value as any).props.amount = 999;
         }).toThrow();
       }

@@ -14,11 +14,11 @@
 
 ## Entity vs AggregateRoot
 
-| | Entity | AggregateRoot |
-|---|---|---|
-| ID + Props | ✓ | ✓ (상속) |
-| equals | ✓ | ✓ (상속) |
-| 도메인 이벤트 | ✗ | ✓ (수집 + pull) |
+|               | Entity | AggregateRoot   |
+| ------------- | ------ | --------------- |
+| ID + Props    | ✓      | ✓ (상속)        |
+| equals        | ✓      | ✓ (상속)        |
+| 도메인 이벤트 | ✗      | ✓ (수집 + pull) |
 
 ---
 
@@ -45,11 +45,11 @@ export interface IDomainEvent {
 
 ### API
 
-| 멤버                                          | 접근          | 설명                                         |
-| --------------------------------------------- | ------------- | -------------------------------------------- |
-| `domainEvents`                                | `get` (public)| 수집된 이벤트 목록 (`readonly IDomainEvent[]`) |
-| `addDomainEvent(event: IDomainEvent): void`   | `protected`   | 이벤트 수집 — Aggregate 커맨드 메서드에서 호출 |
-| `pullDomainEvents(): IDomainEvent[]`          | `public`      | 이벤트 반환 + 내부 목록 비우기 (원자적)       |
+| 멤버                                        | 접근           | 설명                                           |
+| ------------------------------------------- | -------------- | ---------------------------------------------- |
+| `domainEvents`                              | `get` (public) | 수집된 이벤트 목록 (`readonly IDomainEvent[]`) |
+| `addDomainEvent(event: IDomainEvent): void` | `protected`    | 이벤트 수집 — Aggregate 커맨드 메서드에서 호출 |
+| `pullDomainEvents(): IDomainEvent[]`        | `public`       | 이벤트 반환 + 내부 목록 비우기 (원자적)        |
 
 ### 코드
 

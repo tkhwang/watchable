@@ -1,6 +1,6 @@
 ---
-name: "opsx-spec-patch"
-description: "OpenSpec Inline Spec Patch — apply ad-hoc fixes directly to main specs"
+name: 'opsx-spec-patch'
+description: 'OpenSpec Inline Spec Patch — apply ad-hoc fixes directly to main specs'
 category: Workflow
 tags: [workflow, openspec, spec-patch]
 ---
@@ -30,6 +30,7 @@ tags: [workflow, openspec, spec-patch]
 ### Step 1: Identify patch target
 
 Identify what should be reflected in the spec from conversation context:
+
 - What architectural rules/constraints were discovered?
 - What behavior was added or changed?
 - What scenarios are now newly covered?
@@ -51,14 +52,17 @@ Write the content to add, following the existing spec format. Must include the f
 
 ```markdown
 ### Requirement: {title}
+
 {one-line description}
 
 #### Scenario: {scenario name}
+
 - **GIVEN** {precondition}
 - **WHEN** {trigger}
 - **THEN** {expected result}
 
-#### Rule: {rule name}  (optional)
+#### Rule: {rule name} (optional)
+
 - {rule content}
 - **Rationale**: {why this rule is needed}
 ```
@@ -66,6 +70,7 @@ Write the content to add, following the existing spec format. Must include the f
 ### Step 4: User confirmation
 
 Present the patch draft to the user for approval:
+
 - Insertion point (which spec file, where in the file)
 - Patch content
 - Incorporate any revision requests

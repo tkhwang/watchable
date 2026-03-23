@@ -28,23 +28,23 @@ Shared Kernel: core/ (Entity, ValueObject, AggregateRoot, Result, DomainError)
 
 ### Aggregates
 
-| Aggregate | 책임 |
-|-----------|------|
-| **Task** | Task 생성/수정/아카이브. Color VO 포함 |
+| Aggregate     | 책임                                            |
+| ------------- | ----------------------------------------------- |
+| **Task**      | Task 생성/수정/아카이브. Color VO 포함          |
 | **TimeEntry** | 시간 기록 생명주기. TimeRange, Duration VO 포함 |
 
 ### Value Objects
 
-| VO | 소속 | 불변식 |
-|----|------|--------|
-| **Color** | Task | `#[0-9a-fA-F]{6}` 형식. contrastTextColor 계산 |
-| **Duration** | TimeEntry | seconds >= 0. format, add 연산 |
-| **TimeRange** | TimeEntry | stoppedAt >= startedAt (둘 다 존재 시) |
+| VO            | 소속      | 불변식                                         |
+| ------------- | --------- | ---------------------------------------------- |
+| **Color**     | Task      | `#[0-9a-fA-F]{6}` 형식. contrastTextColor 계산 |
+| **Duration**  | TimeEntry | seconds >= 0. format, add 연산                 |
+| **TimeRange** | TimeEntry | stoppedAt >= startedAt (둘 다 존재 시)         |
 
 ### Domain Service
 
-| Service | 책임 |
-|---------|------|
+| Service          | 책임                                   |
+| ---------------- | -------------------------------------- |
 | **TimerService** | 단일 활성 타이머 제약 + 자동 전환 로직 |
 
 ### Repository Interfaces
@@ -64,8 +64,8 @@ Shared Kernel: core/ (Entity, ValueObject, AggregateRoot, Result, DomainError)
 
 ### Entity
 
-| Entity | 책임 |
-|--------|------|
+| Entity          | 책임                                                 |
+| --------------- | ---------------------------------------------------- |
 | **UserProfile** | 사용자 설정 (displayName, timezone, Pomodoro 기본값) |
 
 ### 인증

@@ -26,11 +26,11 @@
 
 ### API
 
-| 멤버                                        | 접근               | 설명                                         |
-| ------------------------------------------- | ------------------ | -------------------------------------------- |
-| `props`                                     | `protected readonly` | 내부 값 저장. `Object.freeze`로 불변 보장    |
-| `constructor(props: Props)`                 | `protected`        | 서브클래스에서 `super(props)` 호출           |
-| `equals(other: ValueObject<Props>): boolean`| `public`           | 기본 구현: constructor 동일 + props shallow === |
+| 멤버                                         | 접근                 | 설명                                            |
+| -------------------------------------------- | -------------------- | ----------------------------------------------- |
+| `props`                                      | `protected readonly` | 내부 값 저장. `Object.freeze`로 불변 보장       |
+| `constructor(props: Props)`                  | `protected`          | 서브클래스에서 `super(props)` 호출              |
+| `equals(other: ValueObject<Props>): boolean` | `public`             | 기본 구현: constructor 동일 + props shallow === |
 
 ### 코드
 
@@ -45,9 +45,8 @@ export abstract class ValueObject<Props> {
   equals(other: ValueObject<Props>): boolean {
     if (this.constructor !== other.constructor) return false;
     const keys = Object.keys(this.props) as (keyof Props)[];
-    return keys.every(k => this.props[k] === other.props[k]);
+    return keys.every((k) => this.props[k] === other.props[k]);
   }
-
 }
 ```
 
@@ -57,10 +56,10 @@ export abstract class ValueObject<Props> {
 
 factory method에서 throw 대신 `Result<T, DomainError>`를 반환한다.
 
-| 위치 | 에러 처리 | 이유 |
-|------|-----------|------|
+| 위치                                 | 에러 처리     | 이유                                         |
+| ------------------------------------ | ------------- | -------------------------------------------- |
 | factory method (`fromXxx`, `create`) | `Result` 반환 | 외부 입력 검증 — 실패 가능성을 타입으로 명시 |
-| 내부 메서드 (`add`, `stop` 등) | throw 유지 | 이미 유효한 VO이므로 실패 불가 |
+| 내부 메서드 (`add`, `stop` 등)       | throw 유지    | 이미 유효한 VO이므로 실패 불가               |
 
 ### Result 타입 (`core/result.ts`)
 
@@ -98,11 +97,14 @@ class Duration extends ValueObject<{ seconds: number }> {
   }
 
   static fromSeconds(seconds: number): Result<Duration, DomainError> {
-    if (seconds < 0) return fail(new DomainError('Duration cannot be negative', 'INVALID_DURATION'));
+    if (seconds < 0)
+      return fail(new DomainError('Duration cannot be negative', 'INVALID_DURATION'));
     return ok(new Duration(seconds));
   }
 
-  get seconds(): number { return this.props.seconds; }
+  get seconds(): number {
+    return this.props.seconds;
+  }
 
   // 내부 메서드: 두 유효한 Duration의 합은 항상 유효 → throw 불필요
   add(other: Duration): Duration {
@@ -119,8 +121,10 @@ class TimeRange extends ValueObject<{ startedAt: Date; stoppedAt: Date | null }>
 
   equals(other: ValueObject<{ startedAt: Date; stoppedAt: Date | null }>): boolean {
     if (!(other instanceof TimeRange)) return false;
-    return this.props.startedAt.getTime() === other.props.startedAt.getTime()
-      && this.props.stoppedAt?.getTime() === other.props.stoppedAt?.getTime();
+    return (
+      this.props.startedAt.getTime() === other.props.startedAt.getTime() &&
+      this.props.stoppedAt?.getTime() === other.props.stoppedAt?.getTime()
+    );
   }
 }
 ```

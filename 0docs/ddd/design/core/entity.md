@@ -14,11 +14,11 @@
 
 ## ValueObject vs Entity
 
-| | ValueObject | Entity |
-|---|---|---|
+|        | ValueObject                 | Entity                     |
+| ------ | --------------------------- | -------------------------- |
 | 동등성 | 값 비교 (props shallow ===) | ID 비교 (`UniqueEntityID`) |
-| 가변성 | 불변 (Object.freeze) | 가변 (mutation methods) |
-| Props | `Readonly<Props>` | `Props` (가변) |
+| 가변성 | 불변 (Object.freeze)        | 가변 (mutation methods)    |
+| Props  | `Readonly<Props>`           | `Props` (가변)             |
 
 > `createdAt`/`updatedAt`은 도메인 로직이 아닌 영속화 관심사이므로 base에 포함하지 않는다.
 > DB(Supabase)에서 자동 관리한다.
@@ -31,20 +31,20 @@
 
 `Props` — Entity 내부 가변 상태의 shape.
 
-| Concrete Entity | Props                                                     |
-| --------------- | --------------------------------------------------------- |
-| Task            | `{ name: string; color: Color; isArchived: boolean }`     |
+| Concrete Entity | Props                                                                         |
+| --------------- | ----------------------------------------------------------------------------- |
+| Task            | `{ name: string; color: Color; isArchived: boolean }`                         |
 | TimeEntry       | `{ taskId: string; timeRange: TimeRange; pomodoroSessionId: string \| null }` |
-| UserProfile     | `{ displayName: string; timezone: string; pomodoroFocusMin: number; ... }` |
+| UserProfile     | `{ displayName: string; timezone: string; pomodoroFocusMin: number; ... }`    |
 
 ### API
 
-| 멤버                                        | 접근          | 설명                                       |
-| ------------------------------------------- | ------------- | ------------------------------------------ |
-| `id`                                        | `readonly`    | `UniqueEntityID` VO                        |
-| `props`                                     | `protected`   | 내부 가변 상태 (freeze 없음)               |
-| `constructor(id, props)`                    | `protected`   | 서브클래스에서 `super(id, props)` 호출     |
-| `equals(entity?: Entity<Props>): boolean`   | `public`      | constructor 체크 + ID 기반 동등성          |
+| 멤버                                      | 접근        | 설명                                   |
+| ----------------------------------------- | ----------- | -------------------------------------- |
+| `id`                                      | `readonly`  | `UniqueEntityID` VO                    |
+| `props`                                   | `protected` | 내부 가변 상태 (freeze 없음)           |
+| `constructor(id, props)`                  | `protected` | 서브클래스에서 `super(id, props)` 호출 |
+| `equals(entity?: Entity<Props>): boolean` | `public`    | constructor 체크 + ID 기반 동등성      |
 
 ### 코드
 
@@ -75,10 +75,10 @@ export abstract class Entity<Props> {
 
 ## 에러 처리
 
-| 위치 | 에러 처리 | 이유 |
-|------|-----------|------|
-| factory method (`create`, `fromJSON`) | `Result` 반환 | 외부 입력 검증 — 실패 가능성을 타입으로 명시 |
-| mutation method (`rename`, `archive` 등) | throw | 이미 유효한 Entity이므로 검증 실패는 프로그래밍 에러 |
+| 위치                                     | 에러 처리     | 이유                                                 |
+| ---------------------------------------- | ------------- | ---------------------------------------------------- |
+| factory method (`create`, `fromJSON`)    | `Result` 반환 | 외부 입력 검증 — 실패 가능성을 타입으로 명시         |
+| mutation method (`rename`, `archive` 등) | throw         | 이미 유효한 Entity이므로 검증 실패는 프로그래밍 에러 |
 
 ---
 
@@ -103,19 +103,26 @@ class Task extends Entity<{ name: string; color: Color; isArchived: boolean }> {
 
   // Factory
   static create(params: {
-    id: UniqueEntityID; name: string; color: Color;
+    id: UniqueEntityID;
+    name: string;
+    color: Color;
   }): Result<Task, EmptyTaskNameError> {
     if (!params.name.trim()) return fail(new EmptyTaskNameError());
-    return ok(new Task(
-      params.id,
-      { name: params.name.trim(), color: params.color, isArchived: false },
-    ));
+    return ok(
+      new Task(params.id, { name: params.name.trim(), color: params.color, isArchived: false }),
+    );
   }
 
   // Getters
-  get name(): string { return this.props.name; }
-  get color(): Color { return this.props.color; }
-  get isArchived(): boolean { return this.props.isArchived; }
+  get name(): string {
+    return this.props.name;
+  }
+  get color(): Color {
+    return this.props.color;
+  }
+  get isArchived(): boolean {
+    return this.props.isArchived;
+  }
 
   // Mutations (throw)
   rename(newName: string): void {
