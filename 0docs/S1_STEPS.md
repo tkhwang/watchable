@@ -38,18 +38,18 @@
 | 0-3 | `ValueObject<Props>`   | `core/value-object.ts`     | 불변 값 타입 추상 기반 (equals, props freeze)                     |
 | 0-4 | `UniqueEntityID`       | `core/unique-entity-id.ts` | Entity ID VO (ValueObject 상속, 빈 문자열 검증)                   |
 | 0-5 | `Entity<Props>`        | `core/entity.ts`           | ID 기반 엔티티 추상 기반 (UniqueEntityID, props 가변)             |
-| 0-6 | `IDomainEvent`         | `core/domain-event.ts`     | 도메인 이벤트 인터페이스 (eventName, occurredOn, aggregateId)     |
+| 0-6 | `IDomainEvent`         | `core/domain-event.ts`     | 도메인 이벤트 인터페이스 + `DOMAIN_EVENTS` BC별 이벤트 이름 상수 |
 | 0-7 | `AggregateRoot<Props>` | `core/aggregate-root.ts`   | Entity 확장, 도메인 이벤트 수집 (#domainEvents, pullDomainEvents) |
-| 0-8 | Barrel                 | `core/index.ts`            | core 모듈 re-export                                               |
+| 0-8 | ~~Barrel~~             | ~~`core/index.ts`~~        | ~~core 모듈 re-export~~ → 삭제됨 (직접 import 전환)              |
 
 - [x] `DomainError` — abstract class, code + message, 서브클래스 강제
 - [x] `Result` — `ok()` / `fail()` 헬퍼, factory method에서 사용
 - [x] `ValueObject<Props>` — props freeze, equals 기본 구현
 - [x] `UniqueEntityID` — ValueObject 상속, `create(value)` → Result, 빈 문자열 검증
 - [x] `Entity<Props>` — UniqueEntityID + props 가변, constructor 체크 + ID equals
-- [x] `IDomainEvent` — interface (eventName, occurredOn, aggregateId)
+- [x] `IDomainEvent` — interface (eventName, occurredOn, aggregateId) + `DOMAIN_EVENTS` BC별 이벤트 이름 상수
 - [x] `AggregateRoot<Props>` — Entity 확장, #domainEvents, addDomainEvent, pullDomainEvents
-- [x] `core/index.ts` — barrel export 구성 완료
+- [x] ~~`core/index.ts`~~ — barrel export 삭제. 직접 파일 경로 import + package.json subpath exports 전환
 
 #### Value Objects
 
@@ -67,11 +67,11 @@
 
 | #   | Name          | 파일                       | 핵심 행동                                                               | 설계 문서                             |
 | --- | ------------- | -------------------------- | ----------------------------------------------------------------------- | ------------------------------------- |
-| 4   | `Task`        | `entities/task.ts`         | `create()`, `rename()`, `changeColor()`, `archive()`, `canStartTimer()` | `ddd/design/entities/task.md`         |
-| 5   | `TimeEntry`   | `entities/time-entry.ts`   | `start()`, `stop()`, `duration()`, `editTimes()`                        | `ddd/design/entities/time-entry.md`   |
-| 6   | `UserProfile` | `entities/user-profile.ts` | `create()`, Pomodoro 기본값 관리                                        | `ddd/design/entities/user-profile.md` |
+| 4   | `Task`        | `tracking/entities/task.ts`         | `create()`, `rename()`, `changeColor()`, `archive()`, `canStartTimer()` | `ddd/design/tracking/task.md`         |
+| 5   | `TimeEntry`   | `tracking/entities/time-entry.ts`   | `start()`, `stop()`, `duration()`, `editTimes()`                        | `ddd/design/tracking/time-entry.md`   |
+| 6   | `UserProfile` | `identity/entities/user-profile.ts` | `create()`, Pomodoro 기본값 관리                                        | `ddd/design/identity/user-profile.md` |
 
-- [ ] `Task` — Task 생성/수정/아카이브 (Color VO 포함)
+- [x] `Task` — AggregateRoot 상속, Domain Event 발행, userId=UniqueEntityID ✅ 25 tests
 - [ ] `TimeEntry` — 시간 기록 (TimeRange/Duration VO 포함, start/stop/editTimes)
 - [ ] `UserProfile` — 사용자 프로필 (Pomodoro 기본값 포함)
 
@@ -84,10 +84,10 @@
 - [ ] `TaskRepository` — Task 영속화 인터페이스
 - [ ] `TimeEntryRepository` — TimeEntry 영속화 인터페이스
 
-#### Barrel Export & 검증
+#### Import & 검증
 
-- [ ] `domain/index.ts` barrel export 구성
-- [ ] `pnpm --filter @life-logs/domain type-check` 통과 확인
+- [x] barrel export 삭제 → 직접 파일 경로 import + package.json subpath exports (`"./*"`)
+- [x] `pnpm --filter @life-logs/domain type-check` 통과 확인
 
 #### 공통 패턴
 
