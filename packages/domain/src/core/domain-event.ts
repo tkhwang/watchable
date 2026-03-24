@@ -15,5 +15,10 @@ export const DOMAIN_EVENTS = {
       ARCHIVED: 'tracking.task.archived',
       UNARCHIVED: 'tracking.task.unarchived',
     },
+    timeEntry: {
+      STARTED: 'tracking.time-entry.started',
+      STOPPED: 'tracking.time-entry.stopped',
+      TIMES_EDITED: 'tracking.time-entry.times-edited',
+    },
   },
 } as const;

@@ -72,7 +72,7 @@
 | 6   | `UserProfile` | `identity/entities/user-profile.ts` | `create()`, Pomodoro 기본값 관리                                        | `ddd/design/identity/user-profile.md` |
 
 - [x] `Task` — AggregateRoot 상속, Domain Event 발행, userId=UniqueEntityID ✅ 25 tests
-- [ ] `TimeEntry` — 시간 기록 (TimeRange/Duration VO 포함, start/stop/editTimes)
+- [x] `TimeEntry` — AggregateRoot 상속, TimeRange VO 위임, start/stop/editTimes + Domain Event ✅ 18 tests
 - [ ] `UserProfile` — 사용자 프로필 (Pomodoro 기본값 포함)
 
 #### Domain Service
