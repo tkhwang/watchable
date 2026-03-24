@@ -36,10 +36,10 @@ export class InvalidTimeRangeError extends DomainError {
 
 ### Factory
 
-| 메서드    | 시그니처                                                                               | 설명                                      |
-| --------- | -------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `from`    | `(startedAt: Date, stoppedAt: Date \| null): Result<TimeRange, InvalidTimeRangeError>` | 기존 기록으로부터 생성. stoppedAt < startedAt이면 실패 |
-| `start`   | `(at: Date): TimeRange`                                                                | stoppedAt = null. 항상 성공 (Result 없음). stop(at)과 대칭 |
+| 메서드  | 시그니처                                                                               | 설명                                                       |
+| ------- | -------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `from`  | `(startedAt: Date, stoppedAt: Date \| null): Result<TimeRange, InvalidTimeRangeError>` | 기존 기록으로부터 생성. stoppedAt < startedAt이면 실패     |
+| `start` | `(at: Date): TimeRange`                                                                | stoppedAt = null. 항상 성공 (Result 없음). stop(at)과 대칭 |
 
 ### Command
 

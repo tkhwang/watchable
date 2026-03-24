@@ -24,10 +24,7 @@ export class TimeRange extends ValueObject<TimeRangeProps> {
    *  Factory
    */
 
-  static from(
-    startedAt: Date,
-    stoppedAt: Date | null,
-  ): Result<TimeRange, InvalidTimeRangeError> {
+  static from(startedAt: Date, stoppedAt: Date | null): Result<TimeRange, InvalidTimeRangeError> {
     if (stoppedAt !== null && stoppedAt.getTime() < startedAt.getTime()) {
       return fail(new InvalidTimeRangeError('stoppedAt must be >= startedAt'));
     }
@@ -38,7 +35,7 @@ export class TimeRange extends ValueObject<TimeRangeProps> {
     return new TimeRange(at, null);
   }
 
-    /*
+  /*
    *  Override
    */
 
@@ -91,6 +88,4 @@ export class TimeRange extends ValueObject<TimeRangeProps> {
   get stoppedAt(): Date | null {
     return this.props.stoppedAt;
   }
-
-
 }

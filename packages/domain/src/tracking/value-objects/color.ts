@@ -10,7 +10,7 @@ export class InvalidColorError extends DomainError {
   constructor(hex: string) {
     super('INVALID_COLOR', `Invalid hex color: ${hex}`);
   }
-} 
+}
 
 // ── Color VO ───────────────────────────────────────
 

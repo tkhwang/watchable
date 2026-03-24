@@ -5,7 +5,7 @@ const T09 = new Date('2024-01-01T09:00:00Z');
 const T10 = new Date('2024-01-01T10:00:00Z');
 const T11 = new Date('2024-01-01T11:00:00Z');
 const T08 = new Date('2024-01-01T08:00:00Z');
- 
+
 describe('TimeRange', () => {
   describe('정상적인 경우 생성에 성공한다', () => {
     it('create(09:00, 10:00)이면 startedAt/stoppedAt 일치', () => {
@@ -16,7 +16,7 @@ describe('TimeRange', () => {
         expect(result.value.startedAt).toEqual(T09);
         expect(result.value.stoppedAt).toEqual(T10);
       }
-    }); 
+    });
 
     it('create(09:00, 09:00)이면 duration 0 허용', () => {
       const result = TimeRange.from(T09, T09);
@@ -121,8 +121,6 @@ describe('TimeRange', () => {
       });
     });
   });
-
- 
 
   // ── equals & 불변성 ─────────────────────────────
 

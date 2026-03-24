@@ -3,59 +3,59 @@ import { Duration, InvalidDurationError } from '../duration';
 
 describe('Duration', () => {
   describe('정상적인 경우 생성에 성공한다', () => {
-      it('fromSeconds(0)이면 seconds === 0', () => {
-        const result = Duration.fromSeconds(0);
+    it('fromSeconds(0)이면 seconds === 0', () => {
+      const result = Duration.fromSeconds(0);
 
-        expect(result.ok).toBe(true);
-        if (result.ok) {
-          expect(result.value.seconds).toBe(0);
-        }
-      });
-
-      it('fromSeconds(3600)이면 seconds === 3600', () => {
-        const result = Duration.fromSeconds(3600);
-
-        expect(result.ok).toBe(true);
-        if (result.ok) {
-          expect(result.value.seconds).toBe(3600);
-        }
-      });
-
-      it('fromMinutes(1.5)이면 seconds === 90', () => {
-        const result = Duration.fromMinutes(1.5);
-
-        expect(result.ok).toBe(true);
-        if (result.ok) {
-          expect(result.value.seconds).toBe(90);
-        }
-      });
-
-      it('zero()이면 seconds === 0', () => {
-        const duration = Duration.zero();
-
-        expect(duration.seconds).toBe(0);
-      });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.seconds).toBe(0);
+      }
     });
 
-    describe('비정상적인 경우 생성에 실패한다', () => {
-      it('fromSeconds(-1)이면 InvalidDurationError', () => {
-        const result = Duration.fromSeconds(-1);
+    it('fromSeconds(3600)이면 seconds === 3600', () => {
+      const result = Duration.fromSeconds(3600);
 
-        expect(result.ok).toBe(false);
-        if (!result.ok) {
-          expect(result.error).toBeInstanceOf(InvalidDurationError);
-          expect(result.error.code).toBe('INVALID_DURATION');
-        }
-      });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.seconds).toBe(3600);
+      }
+    });
 
-      it('fromMinutes(-5)이면 InvalidDurationError', () => {
-        const result = Duration.fromMinutes(-5);
+    it('fromMinutes(1.5)이면 seconds === 90', () => {
+      const result = Duration.fromMinutes(1.5);
 
-        expect(result.ok).toBe(false);
-        if (!result.ok) {
-          expect(result.error).toBeInstanceOf(InvalidDurationError);
-        }
-      });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.seconds).toBe(90);
+      }
+    });
+
+    it('zero()이면 seconds === 0', () => {
+      const duration = Duration.zero();
+
+      expect(duration.seconds).toBe(0);
+    });
+  });
+
+  describe('비정상적인 경우 생성에 실패한다', () => {
+    it('fromSeconds(-1)이면 InvalidDurationError', () => {
+      const result = Duration.fromSeconds(-1);
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toBeInstanceOf(InvalidDurationError);
+        expect(result.error.code).toBe('INVALID_DURATION');
+      }
+    });
+
+    it('fromMinutes(-5)이면 InvalidDurationError', () => {
+      const result = Duration.fromMinutes(-5);
+
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.error).toBeInstanceOf(InvalidDurationError);
+      }
+    });
   });
 
   // ── command ──────────────────────────────────────

@@ -5,4 +5,3 @@ export interface IDomainEvent {
 
   readonly aggregateId: string;
 }
- 

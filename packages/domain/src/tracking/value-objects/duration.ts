@@ -29,7 +29,7 @@ export class Duration extends ValueObject<{ seconds: number }> {
     if (seconds < 0) return fail(new InvalidDurationError(seconds));
     return ok(new Duration(seconds));
   }
- 
+
   static zero(): Duration {
     return new Duration(0);
   }

@@ -27,7 +27,7 @@ describe('Color', () => {
       const result = Color.fromHex(BLACK);
 
       expect(result.ok).toBe(true);
-    }); 
+    });
 
     it('fromHex("#ffffff" white)이면 성공', () => {
       const WHITE = '#ffffff';
