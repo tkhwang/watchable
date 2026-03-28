@@ -1,11 +1,11 @@
 {
-  "name": "@life-logs/api",
+  "name": "@watchable/api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "predev": "pnpm --filter @life-logs/domain build",
-    "prestart": "pnpm --filter @life-logs/domain build",
-    "prestart:prod": "pnpm --filter @life-logs/domain build",
+    "predev": "pnpm --filter @watchable/domain build",
+    "prestart": "pnpm --filter @watchable/domain build",
+    "prestart:prod": "pnpm --filter @watchable/domain build",
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "nest start",
@@ -19,7 +19,7 @@
     "@nestjs/common": "^11.0.16",
     "@nestjs/core": "^11.0.16",
     "@nestjs/platform-express": "^11.0.16",
-    "@life-logs/domain": "workspace:*",
+    "@watchable/domain": "workspace:*",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0"
   },

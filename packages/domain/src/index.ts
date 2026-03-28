@@ -1,1 +1,1 @@
-export const APP_NAME = 'life-logs';
+export const APP_NAME = 'Watchable';

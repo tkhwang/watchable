@@ -1,5 +1,5 @@
 {
-  "name": "@life-logs/web",
+  "name": "@watchable/web",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@life-logs/domain": "workspace:*",
+    "@watchable/domain": "workspace:*",
     "next": "^16.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

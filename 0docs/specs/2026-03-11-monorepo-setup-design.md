@@ -51,5 +51,5 @@ pnpm workspace + Turborepo 기반 모노레포. React Native Expo (mobile), Next
 
 ## Package References
 
-- Scope: `@life-logs`
-- workspace protocol: `"@life-logs/shared": "workspace:*"`
+- Scope: `@watchable`
+- workspace protocol: `"@watchable/shared": "workspace:*"`

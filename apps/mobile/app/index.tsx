@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { APP_NAME } from '@life-logs/domain';
+import { APP_NAME } from '@watchable/domain';
 
 export default function HomeScreen() {
   return (

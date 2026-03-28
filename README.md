@@ -1,25 +1,23 @@
-# tkhwang-life-logs
+# Watchable
 
 ## Problem
 
-시간을 어디에 쓰고 있는지 직관적으로 파악하기 어렵다.
+숏폼 영상을 무의미하게 소비하는 대신, 미리 좋은 콘텐츠를 북마크해두고 여유가 생기면 의도적으로 소비하는 습관을 만드는 개인용 도구.
 
-- **시간 사용 파악 어려움**: 하루가 끝나면 "오늘 뭐 했지?" 싶을 때가 많다. 체감과 실제 시간 사용 사이에 괴리가 크다.
-- **기존 앱의 높은 마찰**: 기록을 시작하려면 앱을 열고, 카테고리를 고르고, 설명을 쓰고… 단계가 많아 습관이 안 된다.
-- **인사이트 부족**: 기록만 쌓이고 "그래서 어떻게 바꿔야 하는데?"에 대한 답이 없다.
+- **무의미한 소비**: 시간이 남으면 YouTube Shorts, 릴즈 같은 숏폼 영상을 무의미하게 소비하게 된다
+- **좋은 콘텐츠 유실**: 평소 좋은 콘텐츠를 발견해도 나중에 찾기 어렵다
+- **소비 패턴 파악 어려움**: 내가 어떤 콘텐츠를 얼마나 소비하는지 파악하기 어렵다
 
 ## Vision
 
-> "한 번의 터치로 시간을 기록하고, 데이터로 시간 사용 패턴을 이해하는 앱"
-
-최소 마찰로 기록하고, 축적된 데이터에서 패턴과 인사이트를 제공한다.
+> "좋은 콘텐츠를 북마크하고, 의도적으로 소비하며, 소비 패턴을 이해하는 앱"
 
 ## Tech
 
-Typescript 기반 **DDD (Domain-Drive Design)** 적극 사용
+Typescript 기반 **DDD (Domain-Driven Design)** 적극 사용
 
 - Domain : DDD
-- Backend : nest.js
-- Mobile : react-native expo
-- Web : next.js
-- Database : Supabase(postgresql)
+- Backend : NestJS
+- Mobile : React Native Expo
+- Web : Next.js
+- Database : Supabase (PostgreSQL)

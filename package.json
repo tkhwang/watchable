@@ -1,5 +1,5 @@
 {
-  "name": "@life-logs/monorepo",
+  "name": "@watchable/monorepo",
   "private": true,
   "packageManager": "pnpm@10.32.1",
   "scripts": {

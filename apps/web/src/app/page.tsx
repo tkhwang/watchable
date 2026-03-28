@@ -1,4 +1,4 @@
-import { APP_NAME } from '@life-logs/domain';
+import { APP_NAME } from '@watchable/domain';
 
 export default function Home() {
   return (
